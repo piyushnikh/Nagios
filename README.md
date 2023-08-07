@@ -5,6 +5,9 @@ Nagios Core, formerly known as Nagios, is a free and open-source computer-softwa
 Some important references which helped me during this project work for better understanding.
 
 https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/quickstart.html
+
 https://github.com/NagiosEnterprises/nagioscore
+
 https://github.com/NagiosEnterprises/nrpe
+
 https://www.digitalocean.com/community/tutorials/how-to-install-nagios-4-and-monitor-your-servers-on-ubuntu-18-04
