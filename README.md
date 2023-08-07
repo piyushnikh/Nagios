@@ -10,4 +10,4 @@ https://github.com/NagiosEnterprises/nagioscore
 
 https://github.com/NagiosEnterprises/nrpe
 
-https://www.digitalocean.com/community/tutorials/how-to-install-nagios-4-and-monitor-your-servers-on-ubuntu-18-04
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_openstack_platform/7/html/logging_monitoring_and_troubleshooting_guide/monitoring_using_nagios
