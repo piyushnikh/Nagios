@@ -1,0 +1,106 @@
+//***********NAGIOS CLIENT CONFIGURATION******************//
+
+Make sure your machine is already patched, move on to next steps.
+
+1) Install packages by below command,
+
+dnf install -y gcc glibc glibc-common openssl openssl-devel perl wget
+
+2) Navigate to /usr/src to install nrpe plugin.
+
+wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.1.0/nrpe-4.1.0.tar.gz
+tar -xvzf nrpe-4.1.0.tar.gz
+cd nrpe-4.1.0
+
+3) Do ./configure execultion followed by make all.
+
+4) Run below commands,
+
+make
+make all
+make install
+make install-groups-users
+
+5) Install config files,
+
+make install-config
+
+6) Run below commands,
+
+sh -c "echo >> /etc/services"
+sh -c "sudo echo '# Nagios Services' >> /etc/services"
+sh -c "sudo echo 'nrpe 5666/tcp' >> /etc/services"
+
+7) Install scripts installation on host,
+
+make install-init
+
+8) Enable nrpe & start,
+
+systemctl enable nrpe
+systemctl start nrpe
+
+9) navigate to /usr/local/nagios/etc/ and open the nrpe.cfg file & add nagios server public ip address.
+make dont blame nrpe as 1. Also uncomment the system metrics command in nrpe.cfg file.
+
+10) Enable 5666 port on the firewall by the below command & reload it,
+
+firewall-cmd --permanent --add-port=5666/tcp
+firewall-cmd --reload
+
+Verify by running firewall-cmd --list-all, you should see 5666/tcp in port.
+
+
+#################NAGIOS SERVER STEPS##################
+
+11) Go to /usr/local/nagios/etc and make a directory called servers. Give required permissions to nagios user.
+
+chown -R nagios:nagios /usr/local/nagios/etc/servers
+chmod 777 /usr/local/nagios/etc/servers
+
+12) Enter into nagios config file i.e nagios.cfg & uncomment the server lines,
+
+cfg_dir=/usr/local/nagios/etc/servers
+
+13) Next, add a new command to your Nagios configuration that lets you use the check_nrpe command in Nagios service definitions. 
+Open the file /usr/local/nagios/etc/objects/commands.cfg in your editor:-
+
+define command{
+        
+    command_name check_nrpe
+    command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
+}
+14) Next define hosts, modules to monitor services etc like below in a file under /usr/local/nagios/etc/servers directory.
+
+Sample file,
+
+define host {
+        use                             linux-server
+        host_name                       host1
+        alias                           My client server
+        address                         43.204.108.222
+        max_check_attempts              20
+        check_period                    24x7
+        notification_interval           1
+        notification_period             24x7
+}
+define service {
+        use                             generic-service
+        host_name                       host1
+        service_description              PING
+        check_command                   check_ping!200.0,20%!400.0,90%
+}
+define service{
+        use                             generic-service
+        host_name                       host1
+        service_description             Check Users
+        check_command                   check_local_users
+}
+define service{
+        use                             generic-service
+        host_name                       host1
+        service_description             SSH Check
+        check_command                   check_ssh
+}
+
+After restarting nagios on the server, you will be able to see the new hosts & it's services.
