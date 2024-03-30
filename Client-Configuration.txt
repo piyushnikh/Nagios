@@ -4,7 +4,7 @@ Make sure your machine is already patched, move on to next steps.
 
 1) Install packages by below command,
 
-dnf install -y gcc glibc glibc-common openssl openssl-devel perl wget
+dnf install -y gcc glibc glibc-common openssl openssl-devel perl wget firewalld
 
 2) Navigate to /usr/src to install nrpe plugin.
 
@@ -18,8 +18,8 @@ cd nrpe-4.1.0
 
 make
 make all
-make install
 make install-groups-users
+make install
 
 5) Install config files,
 
