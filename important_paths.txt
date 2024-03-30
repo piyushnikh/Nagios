@@ -3,5 +3,6 @@ IMPORTANT PATHS :-
 1) Servers directory (on nagios server) :- /usr/local/nagios/etc/servers
 2) Commands.cfg directory (on nagios server) :- /usr/local/nagios/etc/objects/commands.cfg
 3) NRPE.cfg file (on nagios host) :- /usr/local/nagios/etc/nrpe.cfg
-4) Localhost config file :- /usr/local/nagios/etc/objects/localhost.cfg
-5) Nagios main configuration file :- /usr/local/nagios/etc/nagios.cfg
+4) Localhost config file (on nagios server):- /usr/local/nagios/etc/objects/localhost.cfg
+5) Nagios main configuration file (on nagios server):- /usr/local/nagios/etc/nagios.cfg
+6) Nagios Commands (on nagios server) :- /usr/local/nagios/etc/objects/templates.cfg
