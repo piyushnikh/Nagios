@@ -12,11 +12,10 @@ wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.1.0/nrpe
 tar -xvzf nrpe-4.1.0.tar.gz
 cd nrpe-4.1.0
 
-3) Do ./configure execultion.
+3) Do ./configure --enable-command-args execution.
 
 4) Run below commands,
 
-make
 make all
 make install-groups-users
 make install
