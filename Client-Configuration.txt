@@ -39,8 +39,13 @@ make install-init
 systemctl enable nrpe
 systemctl start nrpe
 
-9) navigate to /usr/local/nagios/etc/ and open the nrpe.cfg file & add nagios server public ip address.
-make dont blame nrpe as 1. Also uncomment the system metrics command in nrpe.cfg file.
+9) navigate to /usr/local/nagios/etc/ and open the nrpe.cfg file and edit the below lines,
+
+don't blame nrpe --> make this to 1.
+server_address --> comment this out.
+allowed_hosts --> set it to 127.0.0.1,::1, nagios server IP address.
+
+Also uncomment the system metrics command in nrpe.cfg file.
 
 10) Enable 5666 port on the firewall by the below command & reload it,
 
@@ -48,7 +53,6 @@ firewall-cmd --permanent --add-port=5666/tcp
 firewall-cmd --reload
 
 Verify by running firewall-cmd --list-all, you should see 5666/tcp in port.
-
 
 #################NAGIOS SERVER STEPS##################
 
@@ -69,37 +73,54 @@ define command{
     command_name check_nrpe
     command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
 }
+
 14) Next define hosts, modules to monitor services etc like below in a file under /usr/local/nagios/etc/servers directory.
 
 Sample file,
 
 define host {
         use                             linux-server
-        host_name                       host1
+        host_name                       Client-1
         alias                           My client server
-        address                         43.204.108.222
+        address                         65.2.130.72
         max_check_attempts              20
         check_period                    24x7
         notification_interval           1
         notification_period             24x7
 }
+
 define service {
         use                             generic-service
-        host_name                       host1
-        service_description              PING
+        host_name                       Client-1
+        service_description             PING
         check_command                   check_ping!200.0,20%!400.0,90%
 }
-define service{
+
+define service {
         use                             generic-service
-        host_name                       host1
-        service_description             Check Users
-        check_command                   check_local_users
-}
-define service{
-        use                             generic-service
-        host_name                       host1
+        host_name                       Client-1
         service_description             SSH Check
         check_command                   check_ssh
 }
 
+define service {
+        use                             generic-service
+        host_name                       Client-1
+        service_description             Check Load
+        check_interval                  2
+        retry_interval                  1
+        check_command                   check_nrpe!check_load -a -w .15,.10,.05 -c .30,.25,.20
+}
+
+define service {
+        use                             generic-service
+        host_name                       Client-1
+        service_description             Check Disk Space
+        check_interval                  2
+        retry_interval                  1
+        check_command                   check_nrpe!check_disk -a -w 20% -c 10% /root
+}
+
 After restarting nagios on the server, you will be able to see the new hosts & it's services.
+
+15) Make sure that commands mentioned in the host config file has a record on the nrpe.cfg file present on the host to be monitored.
