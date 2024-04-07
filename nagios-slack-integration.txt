@@ -1,0 +1,64 @@
+###############################################Nagios-Slack Integration############################################################
+
+Slack can be integrated with Nagios & this duo can perform wonders to alert you about your infrastructure. You just need to have a slack account along with your channel configured.
+
+Following is the process.
+
+1) Set up an incoming webhook integration in your Slack workspace. To get this done, install the incoming webhooks app,
+
+Go to slack UI, More -> Automations -> Search by "Incoming Webhooks"
+
+https://my.slack.com/services/new/incoming-webhook/
+
+Webhook URL will be dispalyed & then move to next steps. It looks like below,
+
+https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
+
+2) Copy the two scripts to your nagios plugins directory, /usr/local/nagios/libexec/. Ensure the script have required permissions. 
+
+Edit the Slack URLs in both scripts to reflect the webhooks you created in Slack.
+
+You can do a dry run by executing these scripts, output should be shown as OK & slack will show a blank notifictaion.
+
+3) Define the new notification commands in Nagios server, i.e commands.cfg file.
+
+define command {
+
+    command_name                          slack_service_notify
+    command_line                          /usr/local/nagios/libexec/slack_service_notify.sh "$NOTIFICATIONTYPE$"  "$HOSTNAME$" "$HOSTADDRESS$" "$SERVICEDESC$" "$SERVICESTATE$" "$SERVICEOUTPUT$" "$LONGDATETIME$"
+
+}
+
+define command {
+
+    command_name                          slack_host_notify
+    command_line                          /usr/local/nagios/libexec/slack_host_notify.sh "$NOTIFICATIONTYPE$"  "$HOSTNAME$" "$HOSTADDRESS$" "$HOSTSTATE$" "$HOSTOUTPUT$" "$LONGDATETIME$"
+
+}
+
+4) Set up a new contact to use the new host and service notification commands.
+
+define contact {
+
+    contact_name                    slack
+    use                             generic-contact
+    service_notification_period     24x7
+    host_notification_period        24x7
+    service_notification_options    w,u,c,r,f,s
+    host_notification_options       d,u,r,f,s
+    service_notification_commands   slack_service_notify
+    host_notification_commands      slack_host_notify
+
+}
+
+define contactgroup {
+
+    contactgroup_name       admins
+    alias                   Nagios Administrators
+    members                 nagiosadmin,slack
+
+}
+
+5) Restart nagios & Induce a load on the VM by the below command & see if that works,
+
+stress-ng --matrix 1 -t 2m
