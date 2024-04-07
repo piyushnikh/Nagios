@@ -74,6 +74,11 @@ define command{
     command_line $USER1$/check_nrpe -H $HOSTADDRESS$ -c $ARG1$
 }
 
+Before moving to next step please run the below command & see if it gives the nrpe version as output.
+
+/usr/local/nagios/libexec/check_nrpe -H 65.2.130.72
+example of check_load plugin, /usr/local/nagios/libexec/check_nrpe -H 65.2.130.72 -c check_load -a -w .15,.10,.05 -c .30,.25,.20
+
 14) Next define hosts, modules to monitor services etc like below in a file under /usr/local/nagios/etc/servers directory.
 
 Sample file,
