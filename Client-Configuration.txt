@@ -56,7 +56,13 @@ Verify by running firewall-cmd --list-all, you should see 5666/tcp in port.
 
 #################NAGIOS SERVER STEPS##################
 
-11) Go to /usr/local/nagios/etc and make a directory called servers. Give required permissions to nagios user.
+11) Navigate to /usr/src to install nrpe plugin.
+
+wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.1.0/nrpe-4.1.0.tar.gz
+tar -xvzf nrpe-4.1.0.tar.gz
+cd nrpe-4.1.0
+
+Go to /usr/local/nagios/etc and make a directory called servers. Give required permissions to nagios user.
 
 chown -R nagios:nagios /usr/local/nagios/etc/servers
 chmod 777 /usr/local/nagios/etc/servers
