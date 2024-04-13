@@ -2,7 +2,12 @@
 
 Make sure your machine is already patched, move on to next steps.
 
-1) Install packages by below command,
+1) Set hostname & timezone by running the below commands,
+
+hostnamectl set-hostname client-1
+timedatectl set-timezone Asia/Calcutta
+
+1.1) Install packages by below command,
 
 dnf install -y gcc glibc glibc-common openssl openssl-devel perl wget firewalld
 
