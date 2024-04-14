@@ -4,7 +4,7 @@
 
 ##Execute configure file on server##
 
-./configure
+./configure --enable-command-args
 
 ##Run the make & make install command to compile & install plugins on server##
 
