@@ -27,7 +27,7 @@ echo "Updates complete !"
 
 ##Install pre-requiste packages##
 
-dnf install php perl httpd wget unzip glibc automake glibc-common gettext autoconf php php-cli gcc gd gd-devel net-snmp openssl-devel unzip net-snmp postfix net-snmp-utils -y
+dnf install php perl httpd wget unzip glibc automake glibc-common gettext autoconf php php-cli gcc gd gd-devel net-snmp openssl-devel unzip net-snmp postfix net-snmp-utils net-tools -y
 dnf groupinstall "Development Tools" -y
 echo "Packages & development tools are installed !"
 sleep 5
