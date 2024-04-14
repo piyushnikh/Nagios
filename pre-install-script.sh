@@ -2,6 +2,7 @@
 
 ##The below commands are to set timedate on server & host##
 
+sudo hostnamectl set-hostname nagios-core
 sudo timedatectl set-timezone Asia/Calcutta
 date
 sleep 5
