@@ -4,7 +4,7 @@
 
 ##Execute configure file on server##
 
-./configure
+./configure --enable-command-args
 sleep 3
 
 ##After this do the make all command & compile the code on server##
