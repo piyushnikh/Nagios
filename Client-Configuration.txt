@@ -7,7 +7,7 @@ Make sure your machine is already patched, move on to next steps.
 hostnamectl set-hostname client-1
 timedatectl set-timezone Asia/Calcutta
 
-1.1) Install packages by below command,
+Install packages by below command,
 
 dnf install -y gcc glibc glibc-common openssl openssl-devel perl wget firewalld net-tools
 
@@ -29,9 +29,7 @@ make install-config
 
 6) Run below commands,
 
-sh -c "echo >> /etc/services"
-sh -c "sudo echo '# Nagios Services' >> /etc/services"
-sh -c "sudo echo 'nrpe 5666/tcp' >> /etc/services"
+sh -c "echo >> /etc/services" && sh -c "sudo echo '# Nagios Services' >> /etc/services" && sh -c "sudo echo 'nrpe 5666/tcp' >> /etc/services"
 
 7) Install scripts installation on host,
 
@@ -39,8 +37,7 @@ make install-init
 
 8) Enable nrpe & start,
 
-systemctl enable nrpe
-systemctl start nrpe
+systemctl enable nrpe && systemctl start nrpe
 
 9) navigate to /usr/local/nagios/etc/ and open the nrpe.cfg file and edit the below lines,
 
@@ -52,25 +49,53 @@ Also uncomment the system metrics command in nrpe.cfg file.
 
 10) Enable 5666 port on the firewall by the below command & reload it,
 
+systemctl start firewalld
 firewall-cmd --permanent --add-port=5666/tcp
 firewall-cmd --reload
 
 Verify by running firewall-cmd --list-all, you should see 5666/tcp in port.
 
+Can verify if nrpe is listening on port 5666
+
+netstat -tulpn | grep nrpe
+
+11) Run the nagios-plugins.sh & plugin-config.sh on client server. This will install all the required plugins on client server.
+
+go to /usr/local/nagios/libexec/ and verify if all plugins are installed.
+
 #################NAGIOS SERVER STEPS##################
 
-11) Repeat 2,3,4,5 steps to install check_nrpe plugin on nagios server.
+12) Install the nrpe plugin,
 
-Go to /usr/local/nagios/etc and make a directory called servers. Give required permissions to nagios user.
+wget https://github.com/NagiosEnterprises/nrpe/releases/download/nrpe-4.1.0/nrpe-4.1.0.tar.gz
+tar -xvzf nrpe-4.1.0.tar.gz
+cd nrpe-4.1.0
+
+Do ./configure --enable-command-args execution.
+
+Run below commands,
+
+make all && make install-groups-users && make install
+
+Install config files,
+
+make install-config
+
+Verify if check_nrpe is present by below command.
+
+cd /usr/local/nagios/libexec/
+ls -l | grep check_nrpe
+
+13) Go to /usr/local/nagios/etc and make a directory called servers. Give required permissions to nagios user.
 
 chown -R nagios:nagios /usr/local/nagios/etc/servers
 chmod 777 /usr/local/nagios/etc/servers
 
-12) Enter into nagios config file i.e nagios.cfg & uncomment the server lines,
+14) Enter into nagios config file i.e nagios.cfg & uncomment the server lines,
 
 cfg_dir=/usr/local/nagios/etc/servers
 
-13) Next, add a new command to your Nagios configuration that lets you use the check_nrpe command in Nagios service definitions. 
+15) Next, add a new command to your Nagios configuration that lets you use the check_nrpe command in Nagios service definitions. 
 Open the file /usr/local/nagios/etc/objects/commands.cfg in your editor:-
 
 define command{
@@ -81,10 +106,10 @@ define command{
 
 Before moving to next step please run the below command & see if it gives the nrpe version as output.
 
-/usr/local/nagios/libexec/check_nrpe -H 65.2.130.72
-example of check_load plugin, /usr/local/nagios/libexec/check_nrpe -H 65.2.130.72 -c check_load -a -w .15,.10,.05 -c .30,.25,.20
+/usr/local/nagios/libexec/check_nrpe -H <ip-address>
+example of check_load plugin, /usr/local/nagios/libexec/check_nrpe -H <ip-address> -c check_load -a -w .15,.10,.05 -c .30,.25,.20
 
-14) Next define hosts, modules to monitor services etc like below in a file under /usr/local/nagios/etc/servers directory.
+16) Next define hosts, modules to monitor services etc like below in a file under /usr/local/nagios/etc/servers directory.
 
 Sample file,
 
@@ -133,4 +158,4 @@ define service {
 
 After restarting nagios on the server, you will be able to see the new hosts & it's services.
 
-15) Make sure that commands mentioned in the host config file has a record on the nrpe.cfg file present on the host to be monitored.
+17) Make sure that commands mentioned in the host config file has a record on the nrpe.cfg file present on the host to be monitored.
