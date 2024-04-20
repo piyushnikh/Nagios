@@ -21,9 +21,7 @@ cd nrpe-4.1.0
 
 4) Run below commands,
 
-make all
-make install-groups-users
-make install
+make all && make install-groups-users && make install
 
 5) Install config files,
 
